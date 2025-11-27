@@ -64,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [MYLY_LEFT_NUMSYM] = LAYOUT(
        KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
     KC_TRNS,KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,   MY_CMI, KC_EQUAL,
-    KC_DEL , KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,   KC_GRV,  KC_BSLS,
+    KC_DEL , KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,  KC_BSLS,   KC_GRV,
                                 KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
   ),
 
