@@ -1,4 +1,4 @@
-/* Copyright 2020 tominabox1
+/* Copyright 2020 tominabox1, 2025 mkalinski
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,3 +16,6 @@
 #pragma once
 
 #define COMBO_TERM 30
+
+// Default is 200, but I need shorter.
+#define TAPPING_TERM 160
