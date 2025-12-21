@@ -17,6 +17,11 @@
 
 enum layers {
     MYLY_BASE,
+    // Layer for games that work on WSAD controls.
+    // It shifts the whole left side one letter right,
+    // and adds some usual functional keys to the leftmost column.
+    // It's meant to be toggled.
+    MYLY_GAMER,
     // Layer for numeric and symbolic keys, expected to be triggered by left hand.
     MYLY_LEFT_NUMSYM,
     // Layer for F-keys and other special keys, expected to be triggered by right hand.
@@ -61,25 +66,33 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                          MY_LMOD,MY_LSPC,            MY_RSPC,MY_RMOD
   ),
 
+  [MYLY_GAMER] = LAYOUT(
+     KC_ESC,  KC_Q,  KC_W,  KC_E,  KC_R,  TG(MYLY_GAMER),  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+    KC_LSFT,  KC_A,  KC_S,  KC_D,  KC_F,                   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+    KC_LCTL,  KC_Z,  KC_X,  KC_C,  KC_V,                   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+                         KC_TRNS,KC_SPC,                   KC_TRNS,KC_TRNS
+  ),
+
   [MYLY_LEFT_NUMSYM] = LAYOUT(
-       KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
+       KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_MUTE,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
     KC_TRNS,KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,   MY_CMI, KC_EQUAL,
     KC_DEL , KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,  KC_BSLS,   KC_GRV,
                                 KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
   ),
 
   [MYLY_RIGHT_FUNCSPEC] = LAYOUT(
-      KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  KC_MUTE,    KC_F6,    KC_F7,    KC_UP,    KC_F8,    KC_F9,
-    UG_TOGG,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,            KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
-    UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,            KC_PGUP,   KC_F10,   KC_F11,   KC_F12,  KC_PGDN,
-                                  KC_TRNS, KC_TRNS,             KC_SPC,  KC_TRNS
+      KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  TG(MYLY_GAMER),    KC_F6,    KC_F7,    KC_UP,    KC_F8,    KC_F9,
+    UG_TOGG,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,                   KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
+    UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,                   KC_PGUP,   KC_F10,   KC_F11,   KC_F12,  KC_PGDN,
+                                  KC_TRNS, KC_TRNS,                    KC_SPC,  KC_TRNS
   )
 };
 // clang-format on
 
 #ifdef ENCODER_MAP_ENABLE
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [MYLY_BASE] =  {ENCODER_CCW_CW(KC_MRWD, KC_MFFD)},
+    [MYLY_BASE] = {ENCODER_CCW_CW(KC_MRWD, KC_MFFD)},
+    [MYLY_GAMER] = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
     [MYLY_LEFT_NUMSYM] = {ENCODER_CCW_CW(KC_MPRV, KC_MNXT)},
     [MYLY_RIGHT_FUNCSPEC] = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)}
 };
