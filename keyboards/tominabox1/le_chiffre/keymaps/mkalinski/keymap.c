@@ -30,6 +30,12 @@ enum layers {
     MYLY_RIGHT_FUNCSPEC
 };
 
+enum my_keycodes {
+    // Fake diabling of underight,
+    // so that indicators can still work.
+    MY_RGBT = SAFE_RANGE
+};
+
 //
 // Space Row
 //
@@ -82,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [MYLY_RIGHT_FUNCSPEC] = LAYOUT(
       KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  TG(MYLY_GAMER),    KC_F6,    KC_F7,    KC_UP,    KC_F8,    KC_F9,
-    UG_TOGG,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,                   KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
+    MY_RGBT,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,                   KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
     UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,                   KC_PGUP,   KC_F10,   KC_F11,   KC_F12,  KC_PGDN,
                                   KC_TRNS, KC_TRNS,                    KC_SPC,  KC_TRNS
   )
@@ -114,3 +120,81 @@ combo_t key_combos[] = {
     [COMBO_BSPC] = COMBO(combo_bspc, KC_BSPC)
 };
 #endif
+
+//
+// RGB matrix helpers and indicators.
+//
+static void my_pseudo_toggle_rgb(void) {
+    static uint8_t saved_mode = RGB_MATRIX_SOLID_COLOR;
+    static hsv_t saved_hsv = {HSV_OFF};
+
+    uint8_t current_mode = rgb_matrix_get_mode();
+    hsv_t current_hsv = rgb_matrix_get_hsv();
+
+    // Only value really matters for lighting to be OFF.
+    if (current_hsv.v == 0) {
+        rgb_matrix_mode_noeeprom(saved_mode);
+        rgb_matrix_sethsv_noeeprom(saved_hsv.h, saved_hsv.s, saved_hsv.v);
+    } else {
+        saved_mode = current_mode;
+        saved_hsv = current_hsv;
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_sethsv_noeeprom(HSV_OFF);
+    }
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case MY_RGBT:
+            if (record->event.pressed) {
+                my_pseudo_toggle_rgb();
+            }
+            return false;
+
+        default:
+            return true;
+    }
+}
+
+// The two leds on the keyboard's face are, from top:
+// RGB_MATRIX_LED_COUNT - 2 and RGB_MATRIX_LED_COUNT - 1.
+#define MY_LED_TOP (RGB_MATRIX_LED_COUNT - 2)
+
+// For indicators, I want to match the brightness of effects,
+// but not let them to be completely turned off
+#define MY_INDICATOR_MINIMUM_BRIGHTNESS 10
+
+static uint8_t my_scale_color_by_val(uint8_t color, uint8_t val) {
+    // Don't let the indicator be completely turned off.
+    if (val < MY_INDICATOR_MINIMUM_BRIGHTNESS) {
+        val = MY_INDICATOR_MINIMUM_BRIGHTNESS;
+    }
+
+    // Value is between 0 and 255 instead of 0 and 100%.
+    // This scales color magnitude by value,
+    // while avoiding introducing floating point maths.
+    // This sets the color's brightness in practice.
+    return color * val / 255;
+}
+
+#define MY_SCALED_RED my_scale_color_by_val(0xFF, rgb_matrix_get_val()), 0, 0
+#define MY_SCALED_GREEN 0, my_scale_color_by_val(0xFF, rgb_matrix_get_val()), 0
+#define MY_SCALED_BLUE 0, 0, my_scale_color_by_val(0xFF, rgb_matrix_get_val())
+
+// This callback is called on every matrix update,
+// and sets the state of each LED.
+bool rgb_matrix_indicators_user(void) {
+    // Use the top front LED for indicator of the active layer,
+    // otherwise keep it off no matter the active effect.
+    if (IS_LAYER_ON(MYLY_RIGHT_FUNCSPEC)) {
+        rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_BLUE);
+    } else if (IS_LAYER_ON(MYLY_LEFT_NUMSYM)) {
+        rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_GREEN);
+    } else if (IS_LAYER_ON(MYLY_GAMER)) {
+        rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_RED);
+    } else {
+        rgb_matrix_set_color(MY_LED_TOP, RGB_OFF);
+    }
+
+    return true;
+}
