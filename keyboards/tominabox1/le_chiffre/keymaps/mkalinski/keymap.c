@@ -133,8 +133,20 @@ static void my_pseudo_toggle_rgb(void) {
 
     // Only value really matters for lighting to be OFF.
     if (current_hsv.v == 0) {
-        rgb_matrix_mode_noeeprom(saved_mode);
-        rgb_matrix_sethsv_noeeprom(saved_hsv.h, saved_hsv.s, saved_hsv.v);
+        // I'm not sure how saving the current effect works on poweroff.
+        // If the current and saved settings somehow both get zeroed,
+        // try to restore defaults.
+        if (saved_hsv.v == 0) {
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_DEFAULT_MODE);
+            rgb_matrix_sethsv_noeeprom(
+                RGB_MATRIX_DEFAULT_HUE,
+                RGB_MATRIX_DEFAULT_SAT,
+                RGB_MATRIX_DEFAULT_VAL
+            );
+        } else {
+            rgb_matrix_mode_noeeprom(saved_mode);
+            rgb_matrix_sethsv_noeeprom(saved_hsv.h, saved_hsv.s, saved_hsv.v);
+        }
     } else {
         saved_mode = current_mode;
         saved_hsv = current_hsv;
