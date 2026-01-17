@@ -18,4 +18,4 @@
 #define COMBO_TERM 30
 
 // Default is 200, but I need shorter.
-#define TAPPING_TERM 160
+#define TAPPING_TERM 170
