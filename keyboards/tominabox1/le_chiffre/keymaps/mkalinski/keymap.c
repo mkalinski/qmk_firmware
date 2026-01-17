@@ -39,12 +39,14 @@ enum my_keycodes {
 //
 // Space Row
 //
-// Spaces will act as "major" keys and alts (for symmetry, as AltGr outside alphas is mandatory).
+// Spaces will act as alts (for symmetry, as AltGr outside alphas is mandatory).
 // mod switches will double as "missing" keys.
+// I once used one space as an enter, but it's inconvenient,
+// as holding Alt for too short may accidentally commit something.
 #define MY_LMOD LT(MYLY_LEFT_NUMSYM, KC_TAB)
 #define MY_LSPC MT(MOD_LALT, KC_SPACE)
 
-#define MY_RSPC MT(MOD_RALT, KC_ENTER)
+#define MY_RSPC MT(MOD_RALT, KC_SPACE)
 #define MY_RMOD LT(MYLY_RIGHT_FUNCSPEC, KC_QUOTE)
 
 //
@@ -107,17 +109,23 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 #ifdef COMBO_ENABLE
 enum combo_events {
     COMBO_ESC,
-    COMBO_BSPC
+    COMBO_BSPC,
+    COMBO_ENTER
 };
 
 // These combos are on the fist layer, pressed with middle two fingers.
 // Because it's more convenient for me to use these fingers, rather than outermost ones.
 const uint16_t PROGMEM combo_esc[] = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM combo_bspc[] = {KC_I, KC_O, COMBO_END};
+// Since combos are core for this layout anyway,
+// let's have one for enter,
+// since it's safer than having it under space.
+const uint16_t PROGMEM combo_enter[] = {MY_SK, MY_CL, COMBO_END};
 
 combo_t key_combos[] = {
     [COMBO_ESC] = COMBO(combo_esc, KC_ESC),
-    [COMBO_BSPC] = COMBO(combo_bspc, KC_BSPC)
+    [COMBO_BSPC] = COMBO(combo_bspc, KC_BSPC),
+    [COMBO_ENTER] = COMBO(combo_enter, KC_ENTER)
 };
 #endif
 
