@@ -19,8 +19,10 @@ enum layers {
     MYLY_BASE,
     // Layer for games that work on WSAD controls.
     // It shifts the whole left side one letter right,
-    // and adds some usual functional keys to the leftmost column.
-    // It's meant to be toggled.
+    // It's meant to be toggled on hold with the small finger.
+    // So the modifier keys will need to be put in range of the thumb.
+    // This makes the lowest left row weird. Letter C also needs to available there.
+    // Let's see if it can work.
     MYLY_GAMER,
     // Layer for numeric and symbolic keys, expected to be triggered by left hand.
     MYLY_LEFT_NUMSYM,
@@ -65,34 +67,38 @@ enum my_keycodes {
 // but this one needs to be explicitly stated.
 #define MY_CMI MT(MOD_RCTL, KC_MINUS)
 
+// Switch to "gamer" layer is under the little finger on the left side.
+// It's irregular, but should work in this specific context.
+#define MY_GLYA LT(MYLY_GAMER, KC_A)
+
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [MYLY_BASE] = LAYOUT(
-    KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,  KC_MPLY,     KC_Y,   KC_U,    KC_I,   KC_O,     KC_P,
-    KC_A,  MY_CS,  MY_SD,  MY_GF,   KC_G,               KC_H,  MY_GJ,   MY_SK,  MY_CL,  KC_SCLN,
-    KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,               KC_N,   KC_M, KC_COMM, KC_DOT,  KC_SLSH,
-                         MY_LMOD,MY_LSPC,            MY_RSPC,MY_RMOD
+       KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,  KC_MPLY,     KC_Y,   KC_U,    KC_I,   KC_O,     KC_P,
+    MY_GLYA,  MY_CS,  MY_SD,  MY_GF,   KC_G,               KC_H,  MY_GJ,   MY_SK,  MY_CL,  KC_SCLN,
+       KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,               KC_N,   KC_M, KC_COMM, KC_DOT,  KC_SLSH,
+                            MY_LMOD,MY_LSPC,            MY_RSPC,MY_RMOD
   ),
 
   [MYLY_GAMER] = LAYOUT(
-     KC_ESC,  KC_Q,  KC_W,  KC_E,  KC_R,  TG(MYLY_GAMER),  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
-    KC_LSFT,  KC_A,  KC_S,  KC_D,  KC_F,                   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
-    KC_LCTL,  KC_Z,  KC_X,  KC_C,  KC_V,                   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
-                         KC_TRNS,KC_SPC,                   KC_TRNS,KC_TRNS
+    KC_TRNS,  KC_Q,  KC_W,     KC_E,     KC_R,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+    KC_TRNS,  KC_A,  KC_S,     KC_D,     KC_F,             KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+    KC_TRNS,  KC_X,  KC_C,  KC_LCTL,  KC_LALT,             KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+                            KC_LSFT, KC_SPACE,             KC_TRNS,  KC_TRNS
   ),
 
   [MYLY_LEFT_NUMSYM] = LAYOUT(
-       KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_MUTE,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
+       KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
     KC_TRNS,KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,   MY_CMI, KC_EQUAL,
     KC_DEL , KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,  KC_BSLS,   KC_GRV,
                                 KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
   ),
 
   [MYLY_RIGHT_FUNCSPEC] = LAYOUT(
-      KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  TG(MYLY_GAMER),    KC_F6,    KC_F7,    KC_UP,    KC_F8,    KC_F9,
-    MY_RGBT,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,                   KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
-    UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,                   KC_PGUP,   KC_F10,   KC_F11,   KC_F12,  KC_PGDN,
-                                  KC_TRNS, KC_TRNS,                    KC_SPC,  KC_TRNS
+      KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  KC_MUTE,    KC_F6,    KC_F7,    KC_UP,    KC_F8,    KC_F9,
+    MY_RGBT,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,            KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
+    UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,            KC_PGUP,   KC_F10,   KC_F11,   KC_F12,  KC_PGDN,
+                                  KC_TRNS, KC_TRNS,             KC_SPC,  KC_TRNS
   )
 };
 // clang-format on
