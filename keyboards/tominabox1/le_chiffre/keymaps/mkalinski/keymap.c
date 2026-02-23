@@ -136,36 +136,58 @@ combo_t key_combos[] = {
 #endif
 
 //
-// RGB matrix helpers and indicators.
+// Processing of custom RGB on/off switch.
 //
 static void my_pseudo_toggle_rgb(void) {
-    static uint8_t saved_mode = RGB_MATRIX_SOLID_COLOR;
-    static hsv_t saved_hsv = {HSV_OFF};
+    static union {
+        uint32_t raw;
+        struct {
+            // This struct consumes the entire space allotted for custom eeprom storage.
+            // But currently I don't have any idea what to put there anyway.
+            uint8_t mode;
+            uint8_t h;
+            uint8_t s;
+            uint8_t v;
+        } data;
+    } saved = {.raw = 0};
 
     uint8_t current_mode = rgb_matrix_get_mode();
     hsv_t current_hsv = rgb_matrix_get_hsv();
 
-    // Only value really matters for lighting to be OFF.
+    // When v (value) is 0, then lighting is surely too dark to see,
+    // so it most likely indicates off state.
     if (current_hsv.v == 0) {
-        // I'm not sure how saving the current effect works on poweroff.
-        // If the current and saved settings somehow both get zeroed,
-        // try to restore defaults.
-        if (saved_hsv.v == 0) {
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_DEFAULT_MODE);
-            rgb_matrix_sethsv_noeeprom(
+        saved.raw = eeconfig_read_user();
+
+        // If somehow the saved v is also 0 at this point,
+        // restore defaults.
+        if (saved.data.v == 0) {
+            rgb_matrix_mode(RGB_MATRIX_DEFAULT_MODE);
+            rgb_matrix_sethsv(
                 RGB_MATRIX_DEFAULT_HUE,
                 RGB_MATRIX_DEFAULT_SAT,
                 RGB_MATRIX_DEFAULT_VAL
             );
         } else {
-            rgb_matrix_mode_noeeprom(saved_mode);
-            rgb_matrix_sethsv_noeeprom(saved_hsv.h, saved_hsv.s, saved_hsv.v);
+            // Restore saved, non-zero values.
+            rgb_matrix_mode(saved.data.mode);
+            rgb_matrix_sethsv(
+                saved.data.h,
+                saved.data.s,
+                saved.data.v
+            );
         }
     } else {
-        saved_mode = current_mode;
-        saved_hsv = current_hsv;
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-        rgb_matrix_sethsv_noeeprom(HSV_OFF);
+        // Save current RGB values
+        // before setting them to "turned off";
+        saved.data.mode = current_mode;
+        saved.data.h = current_hsv.h;
+        saved.data.s = current_hsv.s;
+        saved.data.v = current_hsv.v;
+        eeconfig_update_user(saved.raw);
+
+        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_sethsv(HSV_OFF);
     }
 }
 
@@ -182,6 +204,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+//
+// RGB layer indicators.
+//
 // The two leds on the keyboard's face are, from top:
 // RGB_MATRIX_LED_COUNT - 2 and RGB_MATRIX_LED_COUNT - 1.
 #define MY_LED_TOP (RGB_MATRIX_LED_COUNT - 2)
