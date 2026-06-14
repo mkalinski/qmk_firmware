@@ -17,5 +17,8 @@
 
 #define COMBO_TERM 30
 
-// Default is 200, but I need shorter.
-#define TAPPING_TERM 170
+// Default tapping term is 200. I need shorter.
+// There probably isn't a perfect value, but I need to search a bit.
+// 170 - a little too long, I keep missing modifiers.
+// 150 - a little too short, some taps become modifiers.
+#define TAPPING_TERM 160
