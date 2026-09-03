@@ -63,15 +63,11 @@ enum my_keycodes {
 #define MY_SK MT(MOD_RSFT, KC_K)
 #define MY_CL MT(MOD_RCTL, KC_L)
 
-// On the second layer, the mods are mostly transparent,
-// but this one needs to be explicitly stated.
-#define MY_CMI MT(MOD_RCTL, KC_MINUS)
-
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [MYLY_BASE] = LAYOUT(
     KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,  KC_MPLY,     KC_Y,   KC_U,    KC_I,   KC_O,     KC_P,
-    KC_A,  MY_CS,  MY_SD,  MY_GF,   KC_G,               KC_H,  MY_GJ,   MY_SK,  MY_CL,  KC_SCLN,
+    KC_A,  MY_CS,  MY_SD,  MY_GF,   KC_G,               KC_H,  MY_GJ,   MY_SK,  MY_CL, KC_ENTER,
     KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,               KC_N,   KC_M, KC_COMM, KC_DOT,  KC_SLSH,
                          MY_LMOD,MY_LSPC,            MY_RSPC,MY_RMOD
   ),
@@ -85,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [MYLY_LEFT_NUMSYM] = LAYOUT(
        KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
-    KC_TRNS,KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,   MY_CMI, KC_EQUAL,
+    KC_TRNS,KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_MINUS,           KC_EQUAL,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_SCLN,
     KC_DEL , KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,  KC_BSLS,   KC_GRV,
                                 KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
   ),
@@ -112,7 +108,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 enum combo_events {
     COMBO_ESC,
     COMBO_BSPC,
-    COMBO_ENTER,
     COMBO_GAMER
 };
 
@@ -120,10 +115,6 @@ enum combo_events {
 // Because it's more convenient for me to use these fingers, rather than outermost ones.
 const uint16_t PROGMEM combo_esc[] = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM combo_bspc[] = {KC_I, KC_O, COMBO_END};
-// Since combos are core for this layout anyway,
-// let's have one for enter,
-// since it's safer than having it under space.
-const uint16_t PROGMEM combo_enter[] = {MY_SK, MY_CL, COMBO_END};
 // The idea behind this combo is to quickly toggle the gamer layer,
 // without moving the hand.
 const uint16_t PROGMEM combo_gamer[] = {KC_W, KC_R, COMBO_END};
@@ -131,7 +122,6 @@ const uint16_t PROGMEM combo_gamer[] = {KC_W, KC_R, COMBO_END};
 combo_t key_combos[] = {
     [COMBO_ESC] = COMBO(combo_esc, KC_ESC),
     [COMBO_BSPC] = COMBO(combo_bspc, KC_BSPC),
-    [COMBO_ENTER] = COMBO(combo_enter, KC_ENTER),
     [COMBO_GAMER] = COMBO(combo_gamer, TG(MYLY_GAMER))
 };
 #endif
