@@ -42,14 +42,13 @@ enum my_keycodes {
 // Space Row
 //
 // Spaces will act as alts (for symmetry, as AltGr outside alphas is mandatory).
-// mod switches will double as "missing" keys.
 // I once used one space as an enter, but it's inconvenient,
 // as holding Alt for too short may accidentally commit something.
-#define MY_LMOD LT(MYLY_LEFT_NUMSYM, KC_TAB)
+#define MY_LMOD MO(MYLY_LEFT_NUMSYM)
 #define MY_LSPC MT(MOD_LALT, KC_SPACE)
 
 #define MY_RSPC MT(MOD_RALT, KC_SPACE)
-#define MY_RMOD LT(MYLY_RIGHT_FUNCSPEC, KC_QUOTE)
+#define MY_RMOD MO(MYLY_RIGHT_FUNCSPEC)
 
 //
 // Home Row Mods
@@ -62,6 +61,12 @@ enum my_keycodes {
 #define MY_GJ MT(MOD_RGUI, KC_J)
 #define MY_SK MT(MOD_RSFT, KC_K)
 #define MY_CL MT(MOD_RCTL, KC_L)
+
+//
+// Home Row Mods Redux on the numsym layer,
+// where they overlap with taps on the layer.
+//
+#define MY_CC MT(MOD_RCTL, KC_SCLN)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -80,16 +85,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [MYLY_LEFT_NUMSYM] = LAYOUT(
-       KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
-    KC_TRNS,KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_MINUS,           KC_EQUAL,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_SCLN,
-    KC_DEL , KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,  KC_BSLS,   KC_GRV,
-                                KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
+      KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
+    KC_TAB,KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_MINUS,           KC_EQUAL,  KC_TRNS,  KC_TRNS,    MY_CC, KC_QUOTE,
+    KC_DEL, KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,  KC_BSLS,   KC_GRV,
+                               KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
   ),
 
   [MYLY_RIGHT_FUNCSPEC] = LAYOUT(
-      KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  KC_MUTE,    KC_F6,    KC_F7,    KC_UP,    KC_F8,    KC_F9,
-    MY_RGBT,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,            KC_HOME,  KC_LEFT,  KC_DOWN,  KC_RGHT,   KC_END,
-    UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,            KC_PGUP,   KC_F10,   KC_F11,   KC_F12,  KC_PGDN,
+      KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  KC_MUTE,    KC_F6,    KC_F7,    KC_F8,    KC_F9,   KC_F10,
+    MY_RGBT,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,             KC_F11,  KC_LEFT,    KC_UP,  KC_RGHT,   KC_F12,
+    UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,            KC_HOME,  KC_PGUP,  KC_DOWN,  KC_PGDN,   KC_END,
                                   KC_TRNS, KC_TRNS,             KC_SPC,  KC_TRNS
   )
 };
