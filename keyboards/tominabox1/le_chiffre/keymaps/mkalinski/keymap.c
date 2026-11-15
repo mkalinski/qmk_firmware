@@ -51,30 +51,26 @@ enum my_keycodes {
 #define MY_RMOD MO(MYLY_RIGHT_FUNCSPEC)
 
 //
-// Home Row Mods
+// Mods in the corners.
+// Ctrl is only on the left, like in HHKB ;)
+// However, I needed to put a ctrl on the right on a layer,
+// to recover the A button just in case when it's needed.
 //
-// Shift is on the raised column in this keyboard, as mnemonic.
-#define MY_CS MT(MOD_LCTL, KC_S)
-#define MY_SD MT(MOD_LSFT, KC_D)
-#define MY_GF MT(MOD_LGUI, KC_F)
-
-#define MY_GJ MT(MOD_RGUI, KC_J)
-#define MY_SK MT(MOD_RSFT, KC_K)
-#define MY_CL MT(MOD_RCTL, KC_L)
-
-//
-// Home Row Mods Redux on the numsym layer,
-// where they overlap with taps on the layer.
-//
-#define MY_CC MT(MOD_RCTL, KC_SCLN)
+// Layer 0, left side.
+#define MY_CTL_A MT(MOD_LCTL, KC_A)
+#define MY_SFT_Z MT(MOD_LSFT, KC_Z)
+#define MY_SUP_X MT(MOD_LGUI, KC_X)
+// Layer 0, right side.
+#define MY_SFT_SLS MT(MOD_RSFT, KC_SLSH)
+#define MY_SUP_DOT MT(MOD_RGUI, KC_DOT)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [MYLY_BASE] = LAYOUT(
-    KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,  KC_MPLY,     KC_Y,   KC_U,    KC_I,   KC_O,     KC_P,
-    KC_A,  MY_CS,  MY_SD,  MY_GF,   KC_G,               KC_H,  MY_GJ,   MY_SK,  MY_CL, KC_ENTER,
-    KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,               KC_N,   KC_M, KC_COMM, KC_DOT,  KC_SLSH,
-                         MY_LMOD,MY_LSPC,            MY_RSPC,MY_RMOD
+    KC_Q,         KC_W,   KC_E,   KC_R,   KC_T,  KC_MPLY,     KC_Y,   KC_U,    KC_I,       KC_O,       KC_P,
+    MY_CTL_A,     KC_S,   KC_D,   KC_F,   KC_G,               KC_H,   KC_J,    KC_K,       KC_L,   KC_ENTER,
+    MY_SFT_Z, MY_SUP_X,   KC_C,   KC_V,   KC_B,               KC_N,   KC_M, KC_COMM, MY_SUP_DOT, MY_SFT_SLS,
+                               MY_LMOD,MY_LSPC,            MY_RSPC,MY_RMOD
   ),
 
   [MYLY_GAMER] = LAYOUT(
@@ -85,16 +81,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [MYLY_LEFT_NUMSYM] = LAYOUT(
-      KC_1,   KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
-    KC_TAB,KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_MINUS,           KC_EQUAL,  KC_TRNS,  KC_TRNS,    MY_CC, KC_QUOTE,
-    KC_DEL, KC_INS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,  KC_RCBR,  KC_BSLS,   KC_GRV,
-                               KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
+       KC_1,    KC_2,     KC_3,     KC_4,      KC_5,  KC_TRNS,     KC_6,     KC_7,      KC_8,      KC_9,     KC_0,
+    KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,    KC_INS,             KC_DEL,  KC_TRNS,  KC_MINUS,  KC_EQUAL,  KC_RCTL,
+    KC_TRNS, KC_TRNS,  KC_LCBR,  KC_LBRC,   KC_LPRN,            KC_RPRN,  KC_RBRC,   KC_RCBR,   KC_RGUI,  KC_RSFT,
+                                 KC_TRNS,   KC_TRNS,            KC_TRNS,  KC_TRNS
   ),
 
   [MYLY_RIGHT_FUNCSPEC] = LAYOUT(
       KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,  KC_MUTE,    KC_F6,    KC_F7,    KC_F8,    KC_F9,   KC_F10,
-    MY_RGBT,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_PSCR,             KC_F11,  KC_LEFT,    KC_UP,  KC_RGHT,   KC_F12,
-    UG_NEXT,  UG_HUEU,  UG_SATU,  UG_VALU, UG_SPDU,            KC_HOME,  KC_PGUP,  KC_DOWN,  KC_PGDN,   KC_END,
+    KC_TRNS,  MY_RGBT,  UG_SATU,  UG_HUEU, KC_PSCR,             KC_F11,  KC_LEFT,    KC_UP,  KC_RGHT,   KC_F12,
+    KC_TRNS,  KC_TRNS,  UG_NEXT,  UG_VALU, UG_SPDU,            KC_HOME,  KC_PGUP,  KC_DOWN,  KC_PGDN,   KC_END,
                                   KC_TRNS, KC_TRNS,             KC_SPC,  KC_TRNS
   )
 };
@@ -112,22 +108,44 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 #ifdef COMBO_ENABLE
 enum combo_events {
     COMBO_ESC,
+    COMBO_TAB,
+    COMBO_GAMER,
+
     COMBO_BSPC,
-    COMBO_GAMER
+    COMBO_COLON,
+    COMBO_QUOTE,
+
+    COMBO_GRAVE,
+    COMBO_BSLASH
 };
 
-// These combos are on the fist layer, pressed with middle two fingers.
-// Because it's more convenient for me to use these fingers, rather than outermost ones.
+// Top left side double-finger combos.
 const uint16_t PROGMEM combo_esc[] = {KC_W, KC_E, COMBO_END};
-const uint16_t PROGMEM combo_bspc[] = {KC_I, KC_O, COMBO_END};
-// The idea behind this combo is to quickly toggle the gamer layer,
-// without moving the hand.
+const uint16_t PROGMEM combo_tab[] = {KC_S, KC_D, COMBO_END};
+// Top left side double-separate-finger combos.
 const uint16_t PROGMEM combo_gamer[] = {KC_W, KC_R, COMBO_END};
+
+// Top right side double-finger combos.
+const uint16_t PROGMEM combo_bspc[] = {KC_I, KC_O, COMBO_END};
+const uint16_t PROGMEM combo_colon[] = {KC_K, KC_L, COMBO_END};
+// Middle right side double-separate-finger combos.
+const uint16_t PROGMEM combo_quote[] = {KC_J, KC_L, COMBO_END};
+
+// Top right layer 1 double-finger combos.
+const uint16_t PROGMEM combo_grave[] = {KC_8, KC_9, COMBO_END};
+const uint16_t PROGMEM combo_bslash[] = {KC_MINUS, KC_EQUAL, COMBO_END};
 
 combo_t key_combos[] = {
     [COMBO_ESC] = COMBO(combo_esc, KC_ESC),
+    [COMBO_TAB] = COMBO(combo_tab, KC_TAB),
+    [COMBO_GAMER] = COMBO(combo_gamer, TG(MYLY_GAMER)),
+
     [COMBO_BSPC] = COMBO(combo_bspc, KC_BSPC),
-    [COMBO_GAMER] = COMBO(combo_gamer, TG(MYLY_GAMER))
+    [COMBO_COLON] = COMBO(combo_colon, KC_SCLN),
+    [COMBO_QUOTE] = COMBO(combo_quote, KC_QUOTE),
+
+    [COMBO_GRAVE] = COMBO(combo_grave, KC_GRAVE),
+    [COMBO_BSLASH] = COMBO(combo_bslash, KC_BACKSLASH)
 };
 #endif
 
