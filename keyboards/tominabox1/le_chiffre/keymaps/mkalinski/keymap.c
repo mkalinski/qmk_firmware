@@ -242,24 +242,50 @@ static uint8_t my_scale_color_by_val(uint8_t color, uint8_t val) {
     return color * val / 255;
 }
 
-#define MY_SCALED_RED my_scale_color_by_val(0xFF, rgb_matrix_get_val()), 0, 0
-#define MY_SCALED_GREEN 0, my_scale_color_by_val(0xFF, rgb_matrix_get_val()), 0
-#define MY_SCALED_BLUE 0, 0, my_scale_color_by_val(0xFF, rgb_matrix_get_val())
+#define MY_SCALED_RED_RGB(val) \
+    my_scale_color_by_val(0xFF, (val)), \
+    0, \
+    0
+
+#define MY_SCALED_GREEN_RGB(val) \
+    0, \
+    my_scale_color_by_val(0xFF, (val)), \
+    0
+
+#define MY_SCALED_BLUE_RGB(val) \
+    0, \
+    0, \
+    my_scale_color_by_val(0xFF, (val))
 
 // This callback is called on every matrix update,
 // and sets the state of each LED.
 bool rgb_matrix_indicators_user(void) {
-    // Use the top front LED for indicator of the active layer,
-    // otherwise keep it off no matter the active effect.
-    if (IS_LAYER_ON(MYLY_RIGHT_FUNCSPEC)) {
-        rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_BLUE);
-    } else if (IS_LAYER_ON(MYLY_LEFT_NUMSYM)) {
-        rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_GREEN);
-    } else if (IS_LAYER_ON(MYLY_GAMER)) {
-        rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_RED);
-    } else {
-        rgb_matrix_set_color(MY_LED_TOP, RGB_OFF);
+    // This seems to be the correct way to always get the highest layer.
+    // The documentation on this seems scattered and incomplete.
+    // https://github.com/qmk/qmk_firmware/issues/24945
+    // https://docs.qmk.fm/keymap#keymap-layer-status
+    // https://docs.qmk.fm/features/rgb_matrix#indicator-examples
+    uint8_t layer = get_highest_layer(layer_state | default_layer_state);
+
+    if (layer > 0) {
+        uint8_t val = rgb_matrix_get_val();
+
+        switch (layer) {
+            case MYLY_RIGHT_FUNCSPEC:
+                rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_BLUE_RGB(val));
+                return true;
+
+            case MYLY_LEFT_NUMSYM:
+                rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_GREEN_RGB(val));
+                return true;
+
+            case MYLY_GAMER:
+                rgb_matrix_set_color(MY_LED_TOP, MY_SCALED_RED_RGB(val));
+                return true;
+        }
     }
 
+    // If no layer is active, turn off the top led.
+    rgb_matrix_set_color(MY_LED_TOP, RGB_OFF);
     return true;
 }
